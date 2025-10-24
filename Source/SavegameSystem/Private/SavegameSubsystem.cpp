@@ -158,15 +158,15 @@ TArray<FString> USavegameSubsystem::GetSavegameSlotNames()
 
 
 //TODO check ESaveFlags and ELoadFlags how to use them
-void USavegameSubsystem::CreateNewGame(const TSoftObjectPtr<UWorld> FirstLevel, const TArray<TSoftObjectPtr<UWorld>> initialVisibleSublevels, ULevelSequence* loadingAnimation, bool bAbsolute, FString Options)
+void USavegameSubsystem::CreateNewGame(const TSoftObjectPtr<UWorld> FirstLevel, const TArray<TSoftObjectPtr<UWorld>> initialVisibleSublevels, bool bAbsolute, FString Options)
 {
 	const USaveGameSettings* SGSettings = GetDefault<USaveGameSettings>();
 	CurrentSaveGame = Cast<UCustomSaveGame>(UGameplayStatics::CreateSaveGameObject(SGSettings->savegameClass));
 
-	ChangeLevel(FirstLevel, initialVisibleSublevels, loadingAnimation, false, bAbsolute, Options);
+	ChangeLevel(FirstLevel, initialVisibleSublevels, false, bAbsolute, Options);
 }
 
-void USavegameSubsystem::ChangeLevel(const TSoftObjectPtr<UWorld> NewLevel, const TArray<TSoftObjectPtr<UWorld>> initialVisibleSublevels, ULevelSequence* loadingAnimation, bool bApplySavegameData, bool bAbsolute, FString Options)
+void USavegameSubsystem::ChangeLevel(const TSoftObjectPtr<UWorld> NewLevel, const TArray<TSoftObjectPtr<UWorld>> initialVisibleSublevels, bool bApplySavegameData, bool bAbsolute, FString Options)
 {
 	const FString levelName = FPackageName::ObjectPathToPackageName(NewLevel.ToString());
 	if (CurrentSaveGame) {
@@ -176,18 +176,6 @@ void USavegameSubsystem::ChangeLevel(const TSoftObjectPtr<UWorld> NewLevel, cons
 		CurrentSaveGame->screenshotPath = "";
 
 		CurrentSaveGame->currentMap = levelName;
-		ULevelSequence* newLoadingAnimation = nullptr;
-		if (loadingAnimation)
-			newLoadingAnimation = loadingAnimation;
-		else {
-			if (persistentSaveGame) {
-				FLevelInfo info;
-				//TODO better to change this to async load in the future, maybe not loading here but instead in GetLoadingAnimation() and instead save a softobjectptr
-				if (persistentSaveGame->GetInfoForLevel(NewLevel, info))
-					newLoadingAnimation = info.loadingAnimation.LoadSynchronous();
-			}
-		}
-		CurrentSaveGame->loadingAnimation = newLoadingAnimation;
 
 		//setup new data for level if we dont have savegame data for it
 		if (!CurrentSaveGame->MapSavedActors.Contains(levelName)) {

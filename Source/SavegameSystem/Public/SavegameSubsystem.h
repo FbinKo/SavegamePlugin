@@ -103,16 +103,15 @@ public:
 	TArray<FString> GetSavegameSlotNames();
 
 	UFUNCTION(BlueprintCallable, meta = (AutoCreateRefTerm = "initialVisibleSublevels"), Category = Save)
-	void CreateNewGame(const TSoftObjectPtr<UWorld> FirstLevel, const TArray<TSoftObjectPtr<UWorld>> initialVisibleSublevels, ULevelSequence* loadingAnimation, bool bAbsolute = true, FString Options = FString(TEXT("")));
+	void CreateNewGame(const TSoftObjectPtr<UWorld> FirstLevel, const TArray<TSoftObjectPtr<UWorld>> initialVisibleSublevels, bool bAbsolute = true, FString Options = FString(TEXT("")));
 
 	/*
 	* opens the new level
 	* @param NewLevel					Level to load
 	* @param initialVisibleSublevels	levels to stream in on loading, before loading done is called
-	* @param loadingAnimation			if empty, checks in persistentSaveGame if there is a loading animation referenced by the NewLevel
 	*/
 	UFUNCTION(BlueprintCallable, meta = (AutoCreateRefTerm = "initialVisibleSublevels"))
-	void ChangeLevel(const TSoftObjectPtr<UWorld> NewLevel, const TArray<TSoftObjectPtr<UWorld>> initialVisibleSublevels, ULevelSequence* loadingAnimation = nullptr, bool bApplySavegameData = false, bool bAbsolute = true, FString Options = FString(TEXT("")));
+	void ChangeLevel(const TSoftObjectPtr<UWorld> NewLevel, const TArray<TSoftObjectPtr<UWorld>> initialVisibleSublevels, bool bApplySavegameData = false, bool bAbsolute = true, FString Options = FString(TEXT("")));
 
 	UFUNCTION(BlueprintCallable)
 	void EndGame();

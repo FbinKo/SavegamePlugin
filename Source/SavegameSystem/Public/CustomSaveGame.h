@@ -226,9 +226,6 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 		TSoftObjectPtr<UWorld> level;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-		TSoftObjectPtr<class ULevelSequence> loadingAnimation;
-
 	UPROPERTY(EditDefaultsOnly)
 		bool bIsUnlocked = false;
 };
@@ -253,9 +250,6 @@ public:
 	/* what level we are currently in */
 	UPROPERTY(BlueprintReadOnly)
 		FString currentMap;
-
-	UPROPERTY()
-		class ULevelSequence* loadingAnimation;
 
 	/* loading and visibility informations of all sublevels of currentMap */
 	UPROPERTY()
