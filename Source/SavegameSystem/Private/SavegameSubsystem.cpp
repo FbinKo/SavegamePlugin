@@ -331,7 +331,7 @@ bool USavegameSubsystem::SaveGame(FString SlotName)
 							FMemory::Memmove(Data + Row * NewWidth, Data + (Row + CaptureMinY) * OldWidth + CaptureMinX, NewWidth * sizeof(*Data));
 						}
 
-						RawPixels.RemoveAt(NewWidth * NewHeight, OldWidth * OldHeight - NewWidth * NewHeight, false);
+						RawPixels.RemoveAt(NewWidth * NewHeight, OldWidth * OldHeight - NewWidth * NewHeight, EAllowShrinking::No);
 						Size = FIntVector(NewWidth, NewHeight, 0);
 					}
 				}
@@ -702,7 +702,7 @@ void USavegameSubsystem::ApplySaveGameDataInSubLevel(ULevelStreaming* streamingL
 							Actor->AttachToComponent(attachComponent, FAttachmentTransformRules(EAttachmentRule::KeepRelative, true), ActorData.AttachedSocketName);
 						}
 						else {
-							if(Actor->GetIsSpatiallyLoaded() && !Actor->IsInPersistentLevel())
+							if (Actor->GetIsSpatiallyLoaded() && !Actor->IsInPersistentLevel())
 							{
 								//TODO create option for user to customize, if they are aware how to handle the situation
 								UE_LOG(LogSavegame, Warning, TEXT("attach target %s for %s (spatially loaded and not in persistant level) is not of same level, make sure they part of the same level or it could result a unload/load mismatch"), *ActorData.AttachedActorName.ToString(), *Actor->GetFName().ToString());
@@ -710,11 +710,10 @@ void USavegameSubsystem::ApplySaveGameDataInSubLevel(ULevelStreaming* streamingL
 							else
 							{
 								//check if target is in other level, should be avoided but just in case it is covered
-								TArray<TObjectPtr<AActor>> allActors;
+								TArray<AActor*> allActors;
 								UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), allActors);
-								AttachPtr = allActors.FindByPredicate([&](const AActor* it) { if (!IsValid(it) || (it->GetIsSpatiallyLoaded() && !it->IsInPersistentLevel())) return false; return it->GetFName() == ActorData.AttachedActorName; });
-								if (AttachPtr) {
-									AActor* AttachActor = AttachPtr->Get();
+								AActor* AttachActor = *allActors.FindByPredicate([&](const AActor* it) { if (!IsValid(it) || (it->GetIsSpatiallyLoaded() && !it->IsInPersistentLevel())) return false; return it->GetFName() == ActorData.AttachedActorName; });
+								if (AttachActor) {
 									USceneComponent* attachComponent = nullptr;
 									TInlineComponentArray<USceneComponent*> Components;
 									AttachActor->GetComponents(Components);
