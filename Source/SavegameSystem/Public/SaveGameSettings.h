@@ -33,11 +33,15 @@ public:
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "General", meta = (EditCondition = "bAutoSave"))
 	bool bAutoSaveAppliesTimeDilation;
 
-	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "General")
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "General|Sort and Filter")
 	bool bSortSavegamesByTimestamp;
 
-	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "General", meta = (EditCondition = "bSortSavegamesByTimestamp"))
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "General|Sort and Filter", meta = (EditCondition = "bSortSavegamesByTimestamp"))
 	bool bAutoSaveIsAlwaysFirst;
+
+	/* slot names which will get filtered out when checking for slots (can still be loaded, but usually theese slots are not actual savegames, eg. settings or saves which are not applied in the game flow */
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "General|Sort and Filter")
+		TArray<FString> SaveGameSlotNamesToFilter;
 
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "General|Level Change")
 	bool bSaveOnLevelChange;
@@ -65,10 +69,6 @@ public:
 
 	UPROPERTY(Config, EditAnywhere, NoClear, BlueprintReadOnly, Category = "General|Save Data")
 	TSubclassOf<class UPersistentSaveGame> persistentSavegameClass;
-
-	/* slot names which will get filtered out when checking for slots (can still be loaded, but usually theese slots are not actual savegames, eg. settings or saves which are not applied in the game flow */
-	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "General")
-	TArray<FString> SaveGameSlotNamesToFilter;
 
 	/* if true, player will spawn default pawn with default logic and not automatically with saved transform (in case there is a savegame)
 	* -> player savegame data application will have to be handled manually and potentially also the spawn of the correct player class (eg. player has different pawn like a vehicle possessed or the default pawn is not the actual pawn used)
