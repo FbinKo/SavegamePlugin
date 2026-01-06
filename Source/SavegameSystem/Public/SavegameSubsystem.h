@@ -102,12 +102,17 @@ public:
 	UFUNCTION(BlueprintCallable)
 	TArray<FString> GetSavegameSlotNames();
 
+	/*
+	* creates new savegame and opens the new level
+	* @param NewLevel					Level to load, if empty will load into current level
+	* @param initialVisibleSublevels	levels to stream in on loading, before loading done is called
+	*/
 	UFUNCTION(BlueprintCallable, meta = (AutoCreateRefTerm = "initialVisibleSublevels"), Category = Save)
 	void CreateNewGame(const TSoftObjectPtr<UWorld> FirstLevel, const TArray<TSoftObjectPtr<UWorld>> initialVisibleSublevels, bool bAbsolute = true, FString Options = FString(TEXT("")));
 
 	/*
 	* opens the new level
-	* @param NewLevel					Level to load
+	* @param NewLevel					Level to load, if empty will load into current level
 	* @param initialVisibleSublevels	levels to stream in on loading, before loading done is called
 	*/
 	UFUNCTION(BlueprintCallable, meta = (AutoCreateRefTerm = "initialVisibleSublevels"))

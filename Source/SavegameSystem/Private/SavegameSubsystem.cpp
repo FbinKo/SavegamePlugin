@@ -168,7 +168,7 @@ void USavegameSubsystem::CreateNewGame(const TSoftObjectPtr<UWorld> FirstLevel, 
 
 void USavegameSubsystem::ChangeLevel(const TSoftObjectPtr<UWorld> NewLevel, const TArray<TSoftObjectPtr<UWorld>> initialVisibleSublevels, bool bApplySavegameData, bool bAbsolute, FString Options)
 {
-	const FString levelName = FPackageName::ObjectPathToPackageName(NewLevel.ToString());
+	const FString levelName = NewLevel ? FPackageName::ObjectPathToPackageName(NewLevel.ToString()) : GetCurrentWorldName();
 	if (CurrentSaveGame) {
 		bNeedsToApplySavegameData = bApplySavegameData;
 
@@ -712,7 +712,10 @@ void USavegameSubsystem::ApplySaveGameDataInSubLevel(ULevelStreaming* streamingL
 								//check if target is in other level, should be avoided but just in case it is covered
 								TArray<AActor*> allActors;
 								UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), allActors);
-								AActor* AttachActor = *allActors.FindByPredicate([&](const AActor* it) { if (!IsValid(it) || (it->GetIsSpatiallyLoaded() && !it->IsInPersistentLevel())) return false; return it->GetFName() == ActorData.AttachedActorName; });
+								AActor** FoundActor = allActors.FindByPredicate([&](const AActor* it) { if (!IsValid(it) || (it->GetIsSpatiallyLoaded() && !it->IsInPersistentLevel())) return false; return it->GetFName() == ActorData.AttachedActorName; });
+								AActor* AttachActor = nullptr;
+								if (FoundActor)
+									AttachActor = *FoundActor;
 								if (AttachActor) {
 									USceneComponent* attachComponent = nullptr;
 									TInlineComponentArray<USceneComponent*> Components;
